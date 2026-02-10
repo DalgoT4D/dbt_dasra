@@ -1,0 +1,5 @@
+sqlfluff
+dbt-postgres
+sqlfluff-templater-dbt
+pre_commit
+dbt-osmosis

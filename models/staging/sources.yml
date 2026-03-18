@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: salesforce_raw_data
+    schema: salesforce_raw_data
+    tables:
+      - name: Impact_Dashboard_Data_Form__c
+        identifier: Impact_Dashboard_Data_Form__c
+        description: Form data from the Impact Dashboard Data Form custom object in Salesforce.
+
+      - name: Platform_Name__c
+        identifier: Platform_Name__c
+        description: Platform name data from the Platform Name custom object in Salesforce.
+
+      - name: Policy_Name__c
+        identifier: Policy_Name__c
+        description: Policy name data from the Policy Name custom object in Salesforce.
+
+      - name: Account
+        identifier: Account
+        description: Account data from the Account custom object in Salesforce.
+
+      - name: Contact
+        identifier: Contact
+        description: Contact data from the Contact custom object in Salesforce.
+
+  - name: GSheet_Raw_Data
+    schema: GSheet_Raw_Data
+    tables:
+      - name: FX_Rates
+        identifier: FX_Rates
+        description: FX rate data from the GSheet Raw Data schema.

@@ -26,15 +26,15 @@ by_impact_type as (
             else null
         end                         as value,
         case
-            when impact_type_header = 'Lives impacted'
-                then 'Reach'
-            when impact_type_header = 'Government capital catalyzed'
-                then 'Funding Amount (USD)'
             when impact_type_header in (
-                'Policy and/or scheme advised/influenced',
+                'Lives impacted',
                 'Platform/partnership/network nurtured'
             )
-                then 'Count'
+                then 'People'
+            when impact_type_header = 'Government capital catalyzed'
+                then 'Amount (USD)'
+            when impact_type_header = 'Policy and/or scheme advised/influenced'
+                then 'Policies'
             else null
         end                         as value_label
     from base
@@ -54,10 +54,7 @@ by_sub_type as (
         quarter,
         program_name,
         impact_header,
-        coalesce(
-            impact_sub_type_header,
-            impact_type_header
-        )                           as particulars,
+        impact_sub_type_header  as particulars,
         case
             when impact_type_header = 'Lives impacted'
                 then sum(value)
@@ -71,15 +68,15 @@ by_sub_type as (
             else null
         end                         as value,
         case
-            when impact_type_header = 'Lives impacted'
-                then 'Reach'
-            when impact_type_header = 'Government capital catalyzed'
-                then 'Funding Amount (USD)'
             when impact_type_header in (
-                'Policy and/or scheme advised/influenced',
+                'Lives impacted',
                 'Platform/partnership/network nurtured'
-            )
-                then 'Count'
+                )
+                then 'People'
+            when impact_type_header = 'Government capital catalyzed'
+                then 'Amount (USD)'
+            when impact_type_header = 'Policy and/or scheme advised/influenced'
+                then 'Policies'
             else null
         end                         as value_label
     from base
@@ -88,19 +85,66 @@ by_sub_type as (
         quarter,
         program_name,
         impact_header,
-        impact_sub_type_header,
-        impact_type_header
+        impact_type_header,
+        impact_sub_type_header
 
 ),
 
-final as (
+combined as (
 
     select * from by_impact_type
     union all
     select * from by_sub_type
 
+),
+
+yearly_aggregate as (
+
+    select 
+        fy,
+        'Yearly' as yearly,
+        program_name,
+        impact_header,
+        particulars,
+        sum(value)         as value,
+        value_label
+    from combined
+    where quarter in ('Q1', 'Q2', 'Q3', 'Q4')
+    group by 
+        fy,
+        program_name,
+        impact_header,
+        particulars,
+        value_label
+
+),
+
+final as (
+
+    select 
+        fy,
+        quarter as timeframe,
+        program_name,
+        impact_header,
+        particulars,
+        value,
+        value_label
+    from combined
+
+    union all
+
+    select 
+        fy,
+        yearly as timeframe,
+        program_name,
+        impact_header,
+        particulars,
+        value,
+        value_label
+    from yearly_aggregate
+
 )
 
 select *
 from final
-order by fy desc, quarter desc, program_name, impact_header, value_label, particulars
+order by fy desc, program_name, impact_header, value_label, particulars, timeframe asc

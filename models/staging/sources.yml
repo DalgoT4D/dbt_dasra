@@ -29,4 +29,10 @@ sources:
     tables:
       - name: FX_Rates
         identifier: FX_Rates
-        description: FX rate data from the GSheet Raw Data schema.
+        description: FX rate data for 2014 - present.
+      - name: hist_FinalSheet
+        identifier: hist_FinalSheet
+        description: Aggregated Historical impact data from 2024 - 2025 Q2.
+      - name: ref
+        identifier: ref
+        description: reference table of impact-particular-value label-title mapping. This is used to map current SF data to corresponding get title for each row, as per historical data's format.
